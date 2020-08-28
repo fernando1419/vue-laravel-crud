@@ -26,8 +26,8 @@ services:
       - php7-fpm
 
   postgresql:
-    build:
-      context: ../../docker-images-sources/postgresql12
+    # build:
+    #   context: ../../docker-images-sources/postgresql12
     container_name: postgresql-project10
     image: my-images/postgresql12-alpine:0.1
     environment:
