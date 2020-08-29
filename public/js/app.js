@@ -1931,8 +1931,23 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
-  mounted: function mounted() {
-    console.log('Component mounted.');
+  data: function data() {
+    return {
+      description: ''
+    };
+  },
+  methods: {
+    newThought: function newThought() {
+      var thought = {
+        id: 500,
+        description: this.description,
+        created_at: '10-01-2020'
+      };
+      console.log(thought);
+      this.$emit('newThoughtEvent', thought); // an event can have any amount of params.
+
+      this.description = '';
+    }
   }
 });
 
@@ -1960,12 +1975,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
 /* harmony default export */ __webpack_exports__["default"] = ({
-  mounted: function mounted() {
-    console.log('Component mounted.');
-  }
+  props: ['thoughtPropFromFather']
 });
 
 /***/ }),
@@ -1988,9 +1999,25 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
-  mounted: function mounted() {
-    console.log('Component mounted.');
+  data: function data() {
+    return {
+      thoughts: [{
+        id: 1,
+        description: 'Primer descripcion de un thought para probar',
+        created_at: '2020-05-25'
+      }]
+    };
+  },
+  methods: {
+    // the component already has the parameter of the event emitted. "thought" was the parameter for this event.
+    addThought: function addThought(data) {
+      this.thoughts.push(data); // console.log('respondiendo al evento "newThoughtEvent"')
+    }
   }
 });
 
@@ -37578,28 +37605,49 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _vm._m(0)
-}
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "card" }, [
-      _c("div", { staticClass: "card-header" }, [
-        _vm._v("En que estás pensando ahora?")
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "card-body" }, [
-        _c("form", { attrs: { action: "", method: "post" } }, [
+  return _c("div", { staticClass: "card" }, [
+    _c("div", { staticClass: "card-header" }, [
+      _vm._v("En que estás pensando ahora?")
+    ]),
+    _vm._v(" "),
+    _c("div", { staticClass: "card-body" }, [
+      _c(
+        "form",
+        {
+          attrs: { action: "", method: "post" },
+          on: {
+            submit: function($event) {
+              $event.preventDefault()
+              return _vm.newThought()
+            }
+          }
+        },
+        [
           _c("div", { staticClass: "form-group" }, [
             _c("label", { attrs: { for: "thought" } }, [
               _vm._v("Ahora estoy pensando en:")
             ]),
             _vm._v(" "),
             _c("input", {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.description,
+                  expression: "description"
+                }
+              ],
               staticClass: "form-control",
-              attrs: { type: "text", name: "thought", id: "thought" }
+              attrs: { type: "text", name: "thought", id: "thought" },
+              domProps: { value: _vm.description },
+              on: {
+                input: function($event) {
+                  if ($event.target.composing) {
+                    return
+                  }
+                  _vm.description = $event.target.value
+                }
+              }
             })
           ]),
           _vm._v(" "),
@@ -37611,11 +37659,12 @@ var staticRenderFns = [
             },
             [_vm._v("Enviar Pensamiento")]
           )
-        ])
-      ])
+        ]
+      )
     ])
-  }
-]
+  ])
+}
+var staticRenderFns = []
 render._withStripped = true
 
 
@@ -37637,34 +37686,28 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _vm._m(0)
+  return _c("div", { staticClass: "card" }, [
+    _c("div", { staticClass: "card-header" }, [
+      _vm._v("Publicado el " + _vm._s(_vm.thoughtPropFromFather.created_at))
+    ]),
+    _vm._v(" "),
+    _c("div", { staticClass: "card-body" }, [
+      _c("p", [_vm._v(_vm._s(_vm.thoughtPropFromFather.description))])
+    ]),
+    _vm._v(" "),
+    _vm._m(0)
+  ])
 }
 var staticRenderFns = [
   function() {
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "card" }, [
-      _c("div", { staticClass: "card-header" }, [
-        _vm._v("Publicado en 10/12/2020")
-      ]),
+    return _c("div", { staticClass: "card-footer" }, [
+      _c("button", { staticClass: "btn btn-light btn-sm" }, [_vm._v("Editar")]),
       _vm._v(" "),
-      _c("div", { staticClass: "card-body" }, [
-        _c("p", [
-          _vm._v(
-            "Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ducimus aspernatur doloremque sit quas inventore?\n        Tenetur cum corrupti voluptate dolore? Impedit esse reiciendis obcaecati autem! Quibusdam incidunt natus facere\n        quaerat atque!"
-          )
-        ])
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "card-footer" }, [
-        _c("button", { staticClass: "btn btn-light btn-sm" }, [
-          _vm._v("Editar")
-        ]),
-        _vm._v(" "),
-        _c("button", { staticClass: "btn btn-danger btn-sm" }, [
-          _vm._v("Eliminar")
-        ])
+      _c("button", { staticClass: "btn btn-danger btn-sm" }, [
+        _vm._v("Eliminar")
       ])
     ])
   }
@@ -37694,8 +37737,19 @@ var render = function() {
     _c(
       "div",
       { staticClass: "col-md-8" },
-      [_c("new-thought-component"), _vm._v(" "), _c("thought-component")],
-      1
+      [
+        _c("new-thought-component", {
+          on: { newThoughtEvent: _vm.addThought }
+        }),
+        _vm._v(" "),
+        _vm._l(_vm.thoughts, function(thought) {
+          return _c("thought-component", {
+            key: thought.id,
+            attrs: { thoughtPropFromFather: thought }
+          })
+        })
+      ],
+      2
     )
   ])
 }
