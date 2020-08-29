@@ -1,5 +1,5 @@
 <template>
-   <div class="card">
+   <div class="card mb-3">
       <div class="card-header">En que estás pensando ahora?</div>
 
       <div class="card-body">
@@ -12,7 +12,7 @@
          <form action="" method="post" v-on:submit.prevent="newThought()">
             <div class="form-group">
                <label for="thought">Ahora estoy pensando en:</label>
-               <input type="text" name="thought" id="thought" class="form-control" v-model="description">
+               <input type="text" name="thought" id="thought" class="form-control form-control-sm" v-model="description">
             </div>
             <button type="submit" class="btn btn-primary btn-sm">Enviar Pensamiento</button>
          </form>

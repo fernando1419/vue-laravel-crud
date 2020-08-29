@@ -1976,7 +1976,12 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 /* harmony default export */ __webpack_exports__["default"] = ({
-  props: ['thoughtPropFromFather']
+  props: ['thoughtPropFromFather'],
+  methods: {
+    onDelete: function onDelete() {
+      this.$emit('delete');
+    }
+  }
 });
 
 /***/ }),
@@ -1990,6 +1995,7 @@ __webpack_require__.r(__webpack_exports__);
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+//
 //
 //
 //
@@ -2017,6 +2023,9 @@ __webpack_require__.r(__webpack_exports__);
     // the component already has the parameter of the event emitted. "thought" was the parameter for this event.
     addThought: function addThought(data) {
       this.thoughts.push(data); // console.log('respondiendo al evento "newThoughtEvent"')
+    },
+    deleteThought: function deleteThought(index) {
+      this.thoughts.splice(index, 1);
     }
   }
 });
@@ -37605,7 +37614,7 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "card" }, [
+  return _c("div", { staticClass: "card mb-3" }, [
     _c("div", { staticClass: "card-header" }, [
       _vm._v("En que estás pensando ahora?")
     ]),
@@ -37637,7 +37646,7 @@ var render = function() {
                   expression: "description"
                 }
               ],
-              staticClass: "form-control",
+              staticClass: "form-control form-control-sm",
               attrs: { type: "text", name: "thought", id: "thought" },
               domProps: { value: _vm.description },
               on: {
@@ -37686,8 +37695,8 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "card" }, [
-    _c("div", { staticClass: "card-header" }, [
+  return _c("div", { staticClass: "card mb-3" }, [
+    _c("div", { staticClass: "card-header bg-transparent" }, [
       _vm._v("Publicado el " + _vm._s(_vm.thoughtPropFromFather.created_at))
     ]),
     _vm._v(" "),
@@ -37695,23 +37704,18 @@ var render = function() {
       _c("p", [_vm._v(_vm._s(_vm.thoughtPropFromFather.description))])
     ]),
     _vm._v(" "),
-    _vm._m(0)
-  ])
-}
-var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "card-footer" }, [
+    _c("div", { staticClass: "card-footer" }, [
       _c("button", { staticClass: "btn btn-light btn-sm" }, [_vm._v("Editar")]),
       _vm._v(" "),
-      _c("button", { staticClass: "btn btn-danger btn-sm" }, [
-        _vm._v("Eliminar")
-      ])
+      _c(
+        "button",
+        { staticClass: "btn btn-danger btn-sm", on: { click: _vm.onDelete } },
+        [_vm._v(" Eliminar ")]
+      )
     ])
-  }
-]
+  ])
+}
+var staticRenderFns = []
 render._withStripped = true
 
 
@@ -37742,10 +37746,15 @@ var render = function() {
           on: { newThoughtEvent: _vm.addThought }
         }),
         _vm._v(" "),
-        _vm._l(_vm.thoughts, function(thought) {
+        _vm._l(_vm.thoughts, function(thought, index) {
           return _c("thought-component", {
             key: thought.id,
-            attrs: { thoughtPropFromFather: thought }
+            attrs: { thoughtPropFromFather: thought },
+            on: {
+              delete: function($event) {
+                return _vm.deleteThought(index)
+              }
+            }
           })
         })
       ],
