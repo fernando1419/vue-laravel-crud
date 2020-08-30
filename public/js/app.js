@@ -1942,11 +1942,15 @@ __webpack_require__.r(__webpack_exports__);
         id: 500,
         description: this.description,
         created_at: '10-01-2020'
-      };
-      console.log(thought);
-      this.$emit('newThoughtEvent', thought); // an event can have any amount of params.
+      }; // console.log(thought);
 
-      this.description = '';
+      if (this.description.trim() == '') {
+        alert('You must enter a valid thought');
+      } else {
+        this.$emit('newThoughtEvent', thought); // an event can have any amount of params.
+
+        this.description = '';
+      }
     }
   }
 });
@@ -1975,12 +1979,67 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['thoughtPropFromFather'],
+  data: function data() {
+    return {
+      editMode: false,
+      descriptionBeforeUpdate: ''
+    };
+  },
   methods: {
     onDelete: function onDelete() {
       this.$emit('delete');
+    },
+    onEdit: function onEdit() {
+      var _this = this;
+
+      this.editMode = true;
+      this.$nextTick(function () {
+        return _this.$refs.description.focus();
+      }); // console.log(this.$refs)
+    },
+    onCancel: function onCancel() {
+      this.editMode = false;
+      this.thoughtPropFromFather.description = this.descriptionBeforeUpdate; // discard changes.
+    },
+    onUpdate: function onUpdate() {
+      if (this.thoughtPropFromFather.description.trim() == '') {
+        alert('You must enter a valid thought');
+        return;
+      } else {
+        this.editMode = false;
+        this.$emit('update', thought);
+      }
     }
+  },
+  created: function created() {
+    this.descriptionBeforeUpdate = this.thoughtPropFromFather.description.trim();
   }
 });
 
@@ -2009,6 +2068,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
@@ -2023,6 +2083,9 @@ __webpack_require__.r(__webpack_exports__);
     // the component already has the parameter of the event emitted. "thought" was the parameter for this event.
     addThought: function addThought(data) {
       this.thoughts.push(data); // console.log('respondiendo al evento "newThoughtEvent"')
+    },
+    updateThought: function updateThought(index, thought) {
+      this.thoughts[index] = thought;
     },
     deleteThought: function deleteThought(index) {
       this.thoughts.splice(index, 1);
@@ -37641,9 +37704,10 @@ var render = function() {
               directives: [
                 {
                   name: "model",
-                  rawName: "v-model",
+                  rawName: "v-model.trim",
                   value: _vm.description,
-                  expression: "description"
+                  expression: "description",
+                  modifiers: { trim: true }
                 }
               ],
               staticClass: "form-control form-control-sm",
@@ -37654,7 +37718,10 @@ var render = function() {
                   if ($event.target.composing) {
                     return
                   }
-                  _vm.description = $event.target.value
+                  _vm.description = $event.target.value.trim()
+                },
+                blur: function($event) {
+                  return _vm.$forceUpdate()
                 }
               }
             })
@@ -37701,17 +37768,101 @@ var render = function() {
     ]),
     _vm._v(" "),
     _c("div", { staticClass: "card-body" }, [
-      _c("p", [_vm._v(_vm._s(_vm.thoughtPropFromFather.description))])
+      _vm.editMode
+        ? _c("input", {
+            directives: [
+              {
+                name: "model",
+                rawName: "v-model.trim",
+                value: _vm.thoughtPropFromFather.description,
+                expression: "thoughtPropFromFather.description",
+                modifiers: { trim: true }
+              }
+            ],
+            ref: "description",
+            staticClass: "form-control form-control-sm",
+            attrs: {
+              type: "text",
+              name: "description",
+              id: "description",
+              placeholder: "Enter a description for your thought"
+            },
+            domProps: { value: _vm.thoughtPropFromFather.description },
+            on: {
+              keyup: [
+                function($event) {
+                  if (
+                    !$event.type.indexOf("key") &&
+                    _vm._k($event.keyCode, "enter", 13, $event.key, "Enter")
+                  ) {
+                    return null
+                  }
+                  return _vm.onUpdate($event)
+                },
+                function($event) {
+                  if (
+                    !$event.type.indexOf("key") &&
+                    _vm._k($event.keyCode, "esc", 27, $event.key, [
+                      "Esc",
+                      "Escape"
+                    ])
+                  ) {
+                    return null
+                  }
+                  _vm.editMode = false
+                }
+              ],
+              input: function($event) {
+                if ($event.target.composing) {
+                  return
+                }
+                _vm.$set(
+                  _vm.thoughtPropFromFather,
+                  "description",
+                  $event.target.value.trim()
+                )
+              },
+              blur: function($event) {
+                return _vm.$forceUpdate()
+              }
+            }
+          })
+        : _c("p", [_vm._v(_vm._s(_vm.thoughtPropFromFather.description))])
     ]),
     _vm._v(" "),
     _c("div", { staticClass: "card-footer" }, [
-      _c("button", { staticClass: "btn btn-light btn-sm" }, [_vm._v("Editar")]),
+      _vm.editMode
+        ? _c(
+            "button",
+            {
+              staticClass: "btn btn-light btn-sm",
+              on: { click: _vm.onUpdate }
+            },
+            [_vm._v("Guardar cambios")]
+          )
+        : _c(
+            "button",
+            { staticClass: "btn btn-light btn-sm", on: { click: _vm.onEdit } },
+            [_vm._v("Editar")]
+          ),
       _vm._v(" "),
-      _c(
-        "button",
-        { staticClass: "btn btn-danger btn-sm", on: { click: _vm.onDelete } },
-        [_vm._v(" Eliminar ")]
-      )
+      _vm.editMode
+        ? _c(
+            "button",
+            {
+              staticClass: "btn btn-danger btn-sm",
+              on: { click: _vm.onCancel }
+            },
+            [_vm._v(" Cancelar ")]
+          )
+        : _c(
+            "button",
+            {
+              staticClass: "btn btn-danger btn-sm",
+              on: { click: _vm.onDelete }
+            },
+            [_vm._v(" Eliminar ")]
+          )
     ])
   ])
 }
@@ -37751,6 +37902,9 @@ var render = function() {
             key: thought.id,
             attrs: { thoughtPropFromFather: thought },
             on: {
+              update: function($event) {
+                return _vm.updateThought(index)
+              },
               delete: function($event) {
                 return _vm.deleteThought(index)
               }

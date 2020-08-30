@@ -6,6 +6,7 @@
                v-for="(thought, index) in thoughts"
                :key="thought.id"
                :thoughtPropFromFather="thought"
+               @update="updateThought(index)"
                @delete="deleteThought(index)">
          </thought-component> <!-- vue component -->
       </div>
@@ -29,7 +30,10 @@
             this.thoughts.push(data)
             // console.log('respondiendo al evento "newThoughtEvent"')
          },
-         deleteThought (index) {
+         updateThought(index, thought) {
+            this.thoughts[index] = thought
+         },
+         deleteThought(index) {
             this.thoughts.splice(index, 1);
          }
       }
