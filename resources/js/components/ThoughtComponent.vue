@@ -51,6 +51,7 @@
          },
          onEdit() {
             this.editMode = true
+            this.descriptionBeforeUpdate = this.thoughtPropFromFather.description.trim()
             this.$nextTick(() => this.$refs.description.focus())
             // console.log(this.$refs)
          },
@@ -67,9 +68,6 @@
                this.$emit('update', thought)
             }
          }
-      },
-      created() {
-         this.descriptionBeforeUpdate = this.thoughtPropFromFather.description.trim()
       }
    }
 </script>

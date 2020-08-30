@@ -2020,6 +2020,7 @@ __webpack_require__.r(__webpack_exports__);
       var _this = this;
 
       this.editMode = true;
+      this.descriptionBeforeUpdate = this.thoughtPropFromFather.description.trim();
       this.$nextTick(function () {
         return _this.$refs.description.focus();
       }); // console.log(this.$refs)
@@ -2037,9 +2038,6 @@ __webpack_require__.r(__webpack_exports__);
         this.$emit('update', thought);
       }
     }
-  },
-  created: function created() {
-    this.descriptionBeforeUpdate = this.thoughtPropFromFather.description.trim();
   }
 });
 
