@@ -29,18 +29,21 @@
       },
       methods: {
          newThought() {
-            const thought = {
-                  id: 500,
-                  description: this.description,
-                  created_at: '10-01-2020'
-            }
-            // console.log(thought);
             if (this.description.trim() == '') {
-               alert('You must enter a valid thought')
-            } else {
-               this.$emit('newThoughtEvent', thought) // an event can have any amount of params.
-               this.description = ''
+               return alert('You must enter a valid thought')
             }
+
+            const params = {
+               description: this.description
+            }
+            axios.post('api/thoughts', params)
+                  .then( response => {
+                     // console.log(response)
+                     const thought = response.data
+                     this.$emit('newThoughtEvent', thought) // an event can have any amount of params.
+                     this.description = ''
+                  })
+                  .catch( error => console.log(error) )
          }
       }
    }

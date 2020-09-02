@@ -1938,19 +1938,26 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     newThought: function newThought() {
-      var thought = {
-        id: 500,
-        description: this.description,
-        created_at: '10-01-2020'
-      }; // console.log(thought);
+      var _this = this;
 
       if (this.description.trim() == '') {
-        alert('You must enter a valid thought');
-      } else {
-        this.$emit('newThoughtEvent', thought); // an event can have any amount of params.
-
-        this.description = '';
+        return alert('You must enter a valid thought');
       }
+
+      var params = {
+        description: this.description
+      };
+      axios.post('api/thoughts', params).then(function (response) {
+        // console.log(response)
+        var thought = response.data;
+
+        _this.$emit('newThoughtEvent', thought); // an event can have any amount of params.
+
+
+        _this.description = '';
+      })["catch"](function (error) {
+        return console.log(error);
+      });
     }
   }
 });
