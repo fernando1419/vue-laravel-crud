@@ -1947,7 +1947,7 @@ __webpack_require__.r(__webpack_exports__);
       var params = {
         description: this.description
       };
-      axios.post('api/thoughts', params).then(function (response) {
+      axios.post('/api/thoughts', params).then(function (response) {
         // console.log(response)
         var thought = response.data;
 
@@ -2011,6 +2011,9 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ['thoughtPropFromFather'],
   data: function data() {
@@ -2021,15 +2024,23 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     onDelete: function onDelete() {
-      this.$emit('delete');
+      var _this = this;
+
+      if (confirm("Do you really want to delete?")) {
+        axios["delete"]("/api/thoughts/".concat(this.thoughtPropFromFather.id)).then(function () {
+          _this.$emit('delete');
+        })["catch"](function (err) {
+          console.log(err);
+        });
+      }
     },
     onEdit: function onEdit() {
-      var _this = this;
+      var _this2 = this;
 
       this.editMode = true;
       this.descriptionBeforeUpdate = this.thoughtPropFromFather.description.trim();
       this.$nextTick(function () {
-        return _this.$refs.description.focus();
+        return _this2.$refs.description.focus();
       }); // console.log(this.$refs)
     },
     onCancel: function onCancel() {
@@ -2037,13 +2048,23 @@ __webpack_require__.r(__webpack_exports__);
       this.thoughtPropFromFather.description = this.descriptionBeforeUpdate; // discard changes.
     },
     onUpdate: function onUpdate() {
+      var _this3 = this;
+
       if (this.thoughtPropFromFather.description.trim() == '') {
-        alert('You must enter a valid thought');
-        return;
-      } else {
-        this.editMode = false;
-        this.$emit('update', thought);
+        return alert('You must enter a valid thought');
       }
+
+      var params = {
+        description: this.thoughtPropFromFather.description.trim()
+      };
+      axios.put("/api/thoughts/".concat(this.thoughtPropFromFather.id), params).then(function (response) {
+        _this3.editMode = false;
+        var thought = response.data;
+
+        _this3.$emit('update', thought);
+      })["catch"](function (err) {
+        console.log(err);
+      });
     }
   }
 });
@@ -2077,17 +2098,24 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
-      thoughts: [{
-        id: 1,
-        description: 'Primer descripcion de un thought para probar',
-        created_at: '2020-05-25'
-      }]
+      thoughts: []
     };
+  },
+  mounted: function mounted() {
+    var _this = this;
+
+    axios.get('/api/thoughts').then(function (response) {
+      // console.log(response.data)
+      _this.thoughts = response.data;
+    })["catch"](function (error) {
+      return console.log(error);
+    });
   },
   methods: {
     // the component already has the parameter of the event emitted. "thought" was the parameter for this event.
     addThought: function addThought(data) {
-      this.thoughts.push(data); // console.log('respondiendo al evento "newThoughtEvent"')
+      this.thoughts.unshift(data); // adds element at the beginning of the array.
+      // console.log('respondiendo al evento "newThoughtEvent"')
     },
     updateThought: function updateThought(index, thought) {
       this.thoughts[index] = thought;
@@ -37769,7 +37797,19 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "card mb-3" }, [
     _c("div", { staticClass: "card-header bg-transparent" }, [
-      _vm._v("Publicado el " + _vm._s(_vm.thoughtPropFromFather.created_at))
+      _c("span", [
+        _vm._v(
+          " Publicado el " + _vm._s(_vm.thoughtPropFromFather.created_at) + " "
+        )
+      ]),
+      _vm._v(" "),
+      _c("span", [
+        _vm._v(
+          " - Actualizado el " +
+            _vm._s(_vm.thoughtPropFromFather.updated_at) +
+            " "
+        )
+      ])
     ]),
     _vm._v(" "),
     _c("div", { staticClass: "card-body" }, [

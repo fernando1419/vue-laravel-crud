@@ -36,7 +36,7 @@
             const params = {
                description: this.description
             }
-            axios.post('api/thoughts', params)
+            axios.post('/api/thoughts', params)
                   .then( response => {
                      // console.log(response)
                      const thought = response.data

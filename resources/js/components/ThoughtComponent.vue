@@ -1,6 +1,9 @@
 <template>
    <div class="card mb-3">
-      <div class="card-header bg-transparent">Publicado el {{ thoughtPropFromFather.created_at }}</div>
+      <div class="card-header bg-transparent">
+         <span> Publicado el {{ thoughtPropFromFather.created_at }} </span>
+         <span> - Actualizado el {{ thoughtPropFromFather.updated_at }} </span>
+      </div>
       <div class="card-body">
          <input
             v-if="editMode"
@@ -47,7 +50,14 @@
       },
       methods: {
          onDelete () {
-            this.$emit('delete')
+            if( confirm("Do you really want to delete?") ) {
+               axios.delete(`/api/thoughts/${this.thoughtPropFromFather.id}`)
+                  .then(() => {
+                     this.$emit('delete')
+                  }).catch((err) => {
+                     console.log(err)
+                  });
+            }
          },
          onEdit() {
             this.editMode = true
@@ -61,12 +71,20 @@
          },
          onUpdate() {
             if (this.thoughtPropFromFather.description.trim() == '') {
-               alert('You must enter a valid thought')
-               return;
-            } else {
-               this.editMode = false
-               this.$emit('update', thought)
+               return alert('You must enter a valid thought')
             }
+
+            const params = {
+               description: this.thoughtPropFromFather.description.trim()
+            }
+            axios.put(`/api/thoughts/${this.thoughtPropFromFather.id}`, params)
+                  .then((response) => {
+                     this.editMode = false
+                     const thought = response.data
+                     this.$emit('update', thought)
+                  }).catch((err) => {
+                     console.log(err)
+                  });
          }
       }
    }

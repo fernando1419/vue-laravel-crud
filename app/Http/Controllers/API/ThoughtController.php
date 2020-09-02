@@ -24,7 +24,7 @@ class ThoughtController extends Controller
 	 */
 	public function index()
 	{
-		return Thought::where('user_id', auth()->id())->get();
+		return Thought::where('user_id', auth()->id())->latest()->get();
 	}
 
 	/**
@@ -53,7 +53,9 @@ class ThoughtController extends Controller
 	{
 		$thought              = Thought::findOrFail($id);
 		$thought->description = $request->description;
-		return $thought->save();
+		$thought->save();
+
+		return $thought;
 	}
 
 	/**
@@ -64,6 +66,6 @@ class ThoughtController extends Controller
 	public function destroy($id)
 	{
 		$thought = Thought::findOrFail($id);
-		return $thought->delete();
+		$thought->delete();
 	}
 }

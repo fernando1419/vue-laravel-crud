@@ -17,17 +17,21 @@
    export default {
       data () {
          return {
-            thoughts: [{
-               id: 1,
-               description: 'Primer descripcion de un thought para probar',
-               created_at: '2020-05-25'
-            }]
+            thoughts: []
          }
+      },
+      mounted() {
+         axios.get('/api/thoughts')
+               .then( response => {
+                  // console.log(response.data)
+                  this.thoughts = response.data;
+               })
+               .catch( error => console.log(error) )
       },
       methods: {
          // the component already has the parameter of the event emitted. "thought" was the parameter for this event.
          addThought (data) {
-            this.thoughts.push(data)
+            this.thoughts.unshift(data) // adds element at the beginning of the array.
             // console.log('respondiendo al evento "newThoughtEvent"')
          },
          updateThought(index, thought) {
